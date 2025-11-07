@@ -1,59 +1,100 @@
 # Siege Lite Overlay
 
-A **Rainbow Six Siege** companion app that shows live match stats in an overlay window – without touching game memory or doing anything that violates the game ToS.
+A small helper app for **Rainbow Six Siege** that shows player stats in a simple overlay while you play.
 
-The project is split into:
+You type (or OCR-detect) the names from the scoreboard, and the app shows:
 
-- `backend/` – Node.js service that talks to a public R6 stats API and exposes a simple JSON API.
-- `overlay/` – Electron app that:
-  - Lets you enter up to 10 player names and teams (Blue / Orange)
-  - Fetches their ranked stats from the backend
-  - Shows a clean match view with ranks, MMR, K/D, winrates, etc.
-  - Displays rank badges + colors
-  - Has an always-on-top overlay mode + global hotkey
-  - Can capture the screen, run OCR, and auto-fill player slots
+- Rank + rank badge icon  
+- MMR  
+- K/D  
+- Number of matches  
+- Win percentage  
 
----
+It does **not** touch game memory or files. It just:
 
-## Features
-
-### Backend
-
-- `/api/player/:platform/:name`
-  - Returns simplified ranked stats for a single player (rank id, MMR, kills, deaths, matches, win%, etc.)
-- `/api/match`
-  - Accepts up to 10 players in one POST body and returns an array of stats
-- Pulls extra info from seasonal stats:
-  - Rank name (e.g. `COPPER III`)
-  - Rank badge image URL
-  - Rank color
-
-### Overlay
-
-- Manual input for up to 10 players, with per-player team selection
-- “Match View” that splits info into **Blue Team** and **Orange Team**
-- Columns: Name, Rank (with icon), MMR, K/D, Matches, Win %
-- “Overlay mode” to hide debug JSON and keep UI compact in-game
-- Always-on-top window, suitable for borderless windowed Siege
-- Global hotkey (default: **F8**) to quickly show/hide the overlay
-- OCR pipeline:
-  - Capture full screen from the main process
-  - Run Tesseract OCR on the screenshot
-  - Show raw OCR text
-  - Heuristically extract name-like tokens
-  - “Fill player slots from detected names” button to auto-populate the 10 entries
+- Looks at what’s already on your screen  
+- Uses player names to ask a stats website for public information  
+- Shows the result in its own window
 
 ---
 
-## Project structure
+## Who this project is for
 
-```text
-backend/
-  server.js          # Express app with /api/player and /api/match
-  package.json
+- Siege players who want quick **lobby scouting** without alt-tabbing to a website 10 times  
+- People who are OK following a step-by-step guide but **don’t know how to code**  
+- Anyone curious how a ToS-friendly “stats overlay” can be built
 
-overlay/
-  main.js            # Electron main process (window + hotkey + OCR handler)
-  index.html         # UI layout
-  renderer.js        # Front-end logic (match view, OCR, auto-fill, API calls)
-  package.json
+If you can copy-paste commands and click a few buttons, you can run this.
+
+---
+
+## What the project contains
+
+This repository has **two parts**:
+
+- `backend/` – a small **stats server**
+  - Talks to a Rainbow Six stats API
+  - Has endpoints like:
+    - `/api/player/:platform/:name`
+    - `/api/match` (up to 10 players at once)
+- `overlay/` – the **overlay app**
+  - A desktop window built with Electron
+  - Lets you enter up to 10 players and their team (Blue / Orange)
+  - Calls the backend and shows stats in a nice “Match View”
+  - Has:
+    - Rank icons + colored rank names
+    - Always-on-top mode
+    - A global hotkey (F8) to hide/show the overlay
+    - Screen capture + OCR (reads names from the scoreboard)  
+      and a button to auto-fill the 10 player boxes
+
+---
+
+## Is this ToS-safe?
+
+This app:
+
+- **Does not** read or write game memory  
+- **Does not** inject into the game  
+- **Does not** send inputs or macros to Siege  
+
+It only:
+
+1. Captures screenshots (like OBS or any screen recorder)  
+2. Reads text from the screenshot using OCR  
+3. Sends those names to a stats service and shows the results
+
+You should still always check the **current** Ubisoft/RS6 ToS yourself,
+but the design is intentionally conservative and non-intrusive.
+
+---
+
+## Requirements
+
+You’ll need:
+
+- **Windows 10/11**  
+- **Rainbow Six Siege** (preferably in *Borderless Windowed* mode)  
+- **Node.js** (LTS version – 18 or newer is fine)  
+  - Download from: <https://nodejs.org>  
+  - When installing, keep the default options and click “Next” a few times.
+
+That’s it. You don’t need Visual Studio or any IDE to just run it.
+
+---
+
+## How to get the project
+
+You can use either **Download ZIP** (easiest) or `git clone`.
+
+### Option A – Download ZIP (non-coder friendly)
+
+1. Open this repo in your browser:  
+   `https://github.com/Nova7311/siege-lite-overlay`
+2. Click the green **Code** button → **Download ZIP**.
+3. Save the ZIP somewhere (e.g. `Documents`).
+4. Right-click the ZIP → **Extract All…**  
+   and extract it to something like:
+
+   ```text
+   C:\Users\<YOU>\Documents\siege-lite-overlay
