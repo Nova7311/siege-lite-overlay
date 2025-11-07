@@ -1,16 +1,12 @@
-# Node / Electron
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Build / dist
 dist/
-out/
 build/
-*.log
+out/
 
-# OS / editor junk
 .DS_Store
 Thumbs.db
 .vscode/
